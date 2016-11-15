@@ -4,3 +4,9 @@ c:\users\administrator\documents\visual studio 2015\Projects\Poker\Poker\bin\Deb
 c:\users\administrator\documents\visual studio 2015\Projects\Poker\Poker\bin\Debug\Poker.pdb
 c:\users\administrator\documents\visual studio 2015\Projects\Poker\Poker\obj\Debug\Poker.exe
 c:\users\administrator\documents\visual studio 2015\Projects\Poker\Poker\obj\Debug\Poker.pdb
+C:\Users\Administrator\Documents\Visual Studio 2015\Projects\poker-game\Poker\Poker\bin\Debug\Poker.exe.config
+C:\Users\Administrator\Documents\Visual Studio 2015\Projects\poker-game\Poker\Poker\obj\Debug\Poker.exe
+C:\Users\Administrator\Documents\Visual Studio 2015\Projects\poker-game\Poker\Poker\obj\Debug\Poker.pdb
+C:\Users\Administrator\Documents\Visual Studio 2015\Projects\poker-game\Poker\Poker\obj\Debug\Poker.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Documents\Visual Studio 2015\Projects\poker-game\Poker\Poker\bin\Debug\Poker.exe
+C:\Users\Administrator\Documents\Visual Studio 2015\Projects\poker-game\Poker\Poker\bin\Debug\Poker.pdb

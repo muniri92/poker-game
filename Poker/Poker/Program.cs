@@ -3,19 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+// using static Poker.Card;
 
 namespace Poker
 {
-    class Card : IComparable 
+    class Card : IComparable
     {
+
+        // Types of Suits (used for iteration to create a new deck)
+
+        //public enum suitTypes
+        //{
+        //    c,
+        //    h,
+        //    d,
+        //    s
+        //}
+
+        // Declare the kind of 'suit'
         public char suit; // C or H or D or S
+
+        // Declare the 'rank'
         public int rank;  // 2=2 .. K=13, A=14
 
+        // Incase I have to create a Deck
         public Card()
         {
-
+            
         }
 
+        // Method that gives value {'rank': ?, 'suit': ?} to a given card 
         public Card(string str)
         {
             str = str.ToUpper();
@@ -57,6 +74,7 @@ namespace Poker
                 }
             }
 
+            // Tell user they forgot to add either a suit or a rank when giving input
             if (rank == 0)
                 Console.WriteLine("Hey, you forgot the rank from " + str);
             if (suit == 0)
@@ -76,9 +94,13 @@ namespace Poker
         static void Main(string[] args)
         {
 
+            // Grab the hand a user has given
             Card[] hand = GetHand(args);
+
+            // Sort the hand by 'rank'
             Array.Sort(hand);
 
+            // Possible choices from the highest possible hand to the lowest
             if (IsStraightFlush(hand))
                 Console.WriteLine("STRAIGHT FLUSH");
 
@@ -103,57 +125,86 @@ namespace Poker
             else if (IsPair(hand))
                 Console.WriteLine("PAIRS");
 
-            else 
+            else
                 Console.WriteLine("HIGH CARD");
-
             Console.Read();
 
         }
 
+        // Get the current hand to play the game
         static Card[] GetHand(string[] args)
         {
             Card[] hand = new Card[5];
             int index = 0;
+
+            // Initialize new hand using the given input
             foreach (string a in args)
             {
                 if (index >= 5)
                     break;
                 Card c = new Card(a);
                 hand[index++] = c;
+                Console.Write(a);
             }
+            
 
-            /*while (index < 5)
+            // Initialize new hand using the Deal method 
+            
+            while (index < 5)
             {
                 hand[index++] = Deal();
             }
-            */
+
             return hand;
-
-            
-
         }
-       /* 
-        CREATE DECK
 
+        /*/
+        ///  CREATE DECK
+        /*/
+        // Initialize an empty deck
         static Card[] deck = null;
+
+        static char[] suitTypes = { 'c', 'h', 's', 'd' };
+
+        // Keep track of the card that have been dealed
         static int dealIndex = 0;
 
+        // Method that deals a random card 
         static Card Deal()
         {
+            // Check if the deck exists or if it is empty
             if (deck == null || dealIndex >= 52)
             {
+                // Initalize an empty array to create deck
+                Random r = new Random();
                 deck = new Card[52];
                 int index = 0;
-                // TODO: one of each card
 
-                // shuffle (randomize)
+                // A double loop that will create all 52 cards 
+                foreach (char value in suitTypes)
+                {
+                    for (int i = 2; i < 15; i++)
+                    {
+                        deck[index] = new Card() { suit = value, rank = i };
+                        //Console.WriteLine("RANK: " + deck[index].rank);
+                        //Console.WriteLine("SUIT: " + deck[index].suit);
+                        index = index + 1;
+                    }
+                    
+                }
+
+                // Shuffle the deck (Thank you Lyrana for this chunk of code)
+                for (int t = 0; t < deck.Length; t++)
+                {
+                    Card tmp = deck[t];
+                    int next = r.Next(t, deck.Length);
+                    deck[t] = deck[next];
+                    deck[next] = tmp;
+                }
+
             }
-
-            return deck[deckIndex++];
-
+            return deck[dealIndex++];
         }
-        */
-
 
         /*
          HELPER FUNCTION FOR EVERYTHING
@@ -275,11 +326,5 @@ namespace Poker
             }
             return true;
         }
-
-        //// HIGH CARD
-        //static ... HighCard(Card[] hand)
-        //{
-        //    return ;
-        //}
     }
 }
