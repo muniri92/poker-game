@@ -246,7 +246,7 @@ namespace Poker
                 }
                 else if (item.Value == 4)
                     topVal = 4;
-                else if (item.Value == 1)
+                else if (item.Value == 1 && topVal == 0)
                     topVal = 1;
             }
             if (fullTwo && fullThree)
