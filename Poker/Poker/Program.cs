@@ -227,35 +227,48 @@ namespace Poker
                 else
                     dict[hand[i].rank] = 1;
             }
-            int topVal = 0;
-            int twice = 0;
-            bool fullTwo = false;
-            bool fullThree = false;
+
+            Dictionary<string, int> player = new Dictionary<string, int>();
+
+            //int topVal = 0;
+      
+
             foreach (var item in dict)
             {
                 if (item.Value == 2)
                 {
-                    fullTwo = true;
-                    twice = twice + 4;
-                    topVal = 2;
+                    player.Add("twoOfAKind", 1);
+                    player.Add("threeOfAKind", 0);
+                    if (player["twoOfAKind"] == 0)
+                        player.Add("fullHouse", 1);
+                    else
+                        player.Add("twoPairs", 1);
+                    
                 }
                 else if (item.Value == 3)
                 {
-                    fullThree = true;
-                    topVal = 3;
+                    player.Add("threeOfAKind", 1);
+                    player.Add("fourOfAKind", 0);
+                    if (player["threeOfAKind"] == 0)
+                        player.Add("fullHouse", 1);
+                    else
+                        player.Add("twoOfAKind", 0);
+                    
                 }
                 else if (item.Value == 4)
-                    topVal = 4;
-                else if (item.Value == 1 && topVal == 0)
-                    topVal = 1;
+                {
+                    player.Add("fourOfAKind", 1);
+                    player.Add("twoOfAKind", 0);
+                }
             }
-            if (fullTwo && fullThree)
-                return 5;
-            else if (topVal == 4 || topVal == 3)
-                return topVal;
-            else if (twice == 8)
-                return twice;
-            return topVal;
+            //player[topVal] = topVal;
+            //if (fullTwo && fullThree)
+            //    return 5;
+            //else if (topVal == 4 || topVal == 3)
+            //    return topVal;
+            //else if (twice == 8)
+            //    return twice;
+            return 0;
         }
 
         // IS A FLUSH
