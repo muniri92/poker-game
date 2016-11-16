@@ -3,92 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-// using static Poker.Card;
 
 namespace Poker
 {
-    class Card : IComparable
-    {
-
-        // Types of Suits (used for iteration to create a new deck)
-
-        //public enum suitTypes
-        //{
-        //    c,
-        //    h,
-        //    d,
-        //    s
-        //}
-
-        // Declare the kind of 'suit'
-        public char suit; // C or H or D or S
-
-        // Declare the 'rank'
-        public int rank;  // 2=2 .. K=13, A=14
-
-        // Incase I have to create a Deck
-        public Card()
-        {
-            
-        }
-
-        // Method that gives value {'rank': ?, 'suit': ?} to a given card 
-        public Card(string str)
-        {
-            str = str.ToUpper();
-            foreach (char c in str)
-            {
-                switch (c)
-                {
-                    case 'C':
-                    case 'D':
-                    case 'H':
-                    case 'S':
-                        suit = c;
-                        break;
-                    case 'T':
-                        rank = 10;
-                        break;
-                    case 'J':
-                        rank = 11;
-                        break;
-                    case 'Q':
-                        rank = 12;
-                        break;
-                    case 'K':
-                        rank = 13;
-                        break;
-                    case 'A':
-                        rank = 14;
-                        break;
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        rank = c - '0';
-                        break;
-                }
-            }
-
-            // Tell user they forgot to add either a suit or a rank when giving input
-            if (rank == 0)
-                Console.WriteLine("Hey, you forgot the rank from " + str);
-            if (suit == 0)
-                Console.WriteLine("Hey, you forgot the suit from " + str);
-
-        }
-
-        public int CompareTo(object obj)
-        {
-            Card c = obj as Card;
-            return rank - c.rank;
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
@@ -96,11 +13,21 @@ namespace Poker
 
             // Grab the hand a user has given
             Card[] hand = GetHand(args);
+            Card[] aiHand = GetHand(args);
+
+            runHand(hand);
+            runHand(aiHand);
 
             // Sort the hand by 'rank'
             Array.Sort(hand);
 
             // Possible choices from the highest possible hand to the lowest
+            Console.Read();
+
+        }
+
+        private static void runHand(Card[] hand)
+        {
             if (IsStraightFlush(hand))
                 Console.WriteLine("STRAIGHT FLUSH");
 
@@ -127,29 +54,31 @@ namespace Poker
 
             else
                 Console.WriteLine("HIGH CARD");
-            Console.Read();
-
         }
 
         // Get the current hand to play the game
+
         static Card[] GetHand(string[] args)
         {
             Card[] hand = new Card[5];
             int index = 0;
 
-            // Initialize new hand using the given input
-            foreach (string a in args)
+            if (args != null)
             {
-                if (index >= 5)
-                    break;
-                Card c = new Card(a);
-                hand[index++] = c;
-                Console.Write(a);
+                // Initialize new hand using the given input
+                foreach (string a in args)
+                {
+                    if (index >= 5)
+                        break;
+                    Card c = new Card(a);
+                    hand[index++] = c;
+                    Console.Write(a);
+                }
             }
-            
+
 
             // Initialize new hand using the Deal method 
-            
+
             while (index < 5)
             {
                 hand[index++] = Deal();
@@ -186,11 +115,8 @@ namespace Poker
                     for (int i = 2; i < 15; i++)
                     {
                         deck[index] = new Card() { suit = value, rank = i };
-                        //Console.WriteLine("RANK: " + deck[index].rank);
-                        //Console.WriteLine("SUIT: " + deck[index].suit);
                         index = index + 1;
                     }
-                    
                 }
 
                 // Shuffle the deck (Thank you Lyrana for this chunk of code)
@@ -202,6 +128,11 @@ namespace Poker
                     deck[next] = tmp;
                 }
 
+            }
+            if (dealIndex >= 52)
+            {
+                dealIndex = 0;
+                Deal();
             }
             return deck[dealIndex++];
         }
