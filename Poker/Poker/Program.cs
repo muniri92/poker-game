@@ -15,26 +15,31 @@ namespace Poker
             Card[] hand = GetHand(args);
             Card[] aiHand = GetHand(args);
 
-            runHand(hand);
-            runHand(aiHand);
-
             // Sort the hand by 'rank'
             Array.Sort(hand);
+            Array.Sort(aiHand);
 
+            Dictionary<string, int> playerOneDict = helperDict(hand);
+            Dictionary<string, int> playerTwoDict = helperDict(aiHand);
+
+            runHand(playerOneDict, hand);
+            runHand(playerTwoDict, hand);
+            
             // Possible choices from the highest possible hand to the lowest
             Console.Read();
 
         }
 
-        private static void runHand(Card[] hand)
+        private static void runHand(Dictionary<string, int> dict, Card[] hand)
         {
+            int val;
             if (IsStraightFlush(hand))
                 Console.WriteLine("STRAIGHT FLUSH");
 
-            else if (IsFourOfAKind(hand))
+            else if (dict.ContainsKey("fourKind"))
                 Console.WriteLine("FOUR OF A KIND");
 
-            else if (IsFullHouse(hand))
+            else if (dict.ContainsKey("twoKind") && dict.ContainsKey("threeKind"))
                 Console.WriteLine("FULL HOUSE");
 
             else if (IsFlush(hand))
@@ -43,13 +48,13 @@ namespace Poker
             else if (IsStraight(hand))
                 Console.WriteLine("STRAIGHT");
 
-            else if (IsThreeOfAKind(hand))
+            else if (dict.ContainsKey("threeKind"))
                 Console.WriteLine("THREE OF A KIND");
 
-            else if (IsTwoPair(hand))
+            else if (dict.ContainsKey("twoPair") && dict["twoPair"] == 2)
                 Console.WriteLine("TWO PAIRS");
 
-            else if (IsPair(hand))
+            else if (dict.ContainsKey("twoKind"))
                 Console.WriteLine("PAIRS");
 
             else
@@ -72,18 +77,14 @@ namespace Poker
                         break;
                     Card c = new Card(a);
                     hand[index++] = c;
-                    Console.Write(a);
                 }
             }
 
-
             // Initialize new hand using the Deal method 
-
             while (index < 5)
             {
                 hand[index++] = Deal();
             }
-
             return hand;
         }
 
@@ -137,17 +138,8 @@ namespace Poker
             return deck[dealIndex++];
         }
 
-        /*
-         HELPER FUNCTION FOR EVERYTHING
 
-         FULL HOUSE = 5
-         Four of a Kind = 4
-         Three of a Kind = 3
-         Two Pairs = 8
-         Pair = 2
-
-        */
-        static int IsOfAKind(Card[] hand)
+        static Dictionary<string, int> helperDict(Card[] hand)
         {
             Dictionary<int, int> dict = new Dictionary<int, int>();
 
@@ -158,75 +150,62 @@ namespace Poker
                 else
                     dict[hand[i].rank] = 1;
             }
-            int topVal = 0;
-            int twice = 0;
-            bool fullTwo = false;
-            bool fullThree = false;
-            foreach (var item in dict)
+
+
+            /*
+            * 
+            * Dictionary < string, int>
+            *   { highCard: Top rank of all cards in hand,
+            *     fourKind: Four of a kind = [4]
+            *     threeKind: Three of a kind = [3]
+            *     twoKind: Two of a kind = [2]
+            *     twoPair: Two pairs = [2]
+            * 
+            */
+
+            Dictionary<string, int> player = new Dictionary<string, int>();
+            int idx = 0;
+            int highPair = 0;
+            foreach (var value in dict)
             {
-                if (item.Value == 2)
+                if (value.Value == 4)
                 {
-                    fullTwo = true;
-                    twice = twice + 4;
-                    topVal = 2;
+                    player.Add("fourKind", 4);
+                    player.Add("highCard", value.Key);
+                    break;
                 }
-                else if (item.Value == 3)
+
+                if (value.Value == 3)
                 {
-                    fullThree = true;
-                    topVal = 3;
+                    player.Add("threeKind", 3);
+                    player.Add("highCard", value.Key);
                 }
-                else if (item.Value == 4)
-                    topVal = 4;
-                else if (item.Value == 1 && topVal == 0)
-                    topVal = 1;
+
+                if (value.Value == 2)
+                {
+                    if (player.ContainsKey("twoKind"))
+                    {
+                        player["twoPairs"]++;
+                        if (highPair < value.Key)
+                            highPair = value.Key;
+                    }
+                    else
+                    {
+                        player.Add("twoPairs", 1);
+                        player.Add("twoKind", 2);
+                        highPair = value.Key;
+                    }
+                }
+
+                if (value.Value == 1)
+                {
+                    if (idx >3)
+                        player.Add("highCard", hand[0].rank);
+                    idx++;
+                }
+
             }
-            if (fullTwo && fullThree)
-                return 5;
-            else if (topVal == 4 || topVal == 3)
-                return topVal;
-            else if (twice == 8)
-                return twice;
-            return topVal;
-        }
-
-        // IS A FLUSH
-        static bool IsFullHouse(Card[] hand)
-        {
-            if (IsOfAKind(hand) == 5)
-                return true;
-            return false;
-        }
-
-        // FOUR OF A KIND
-        static bool IsFourOfAKind(Card[] hand)
-        {
-            if (IsOfAKind(hand) == 4)
-                return true;
-            return false;
-        }
-
-        // THREE OF A KIND
-        static bool IsThreeOfAKind(Card[] hand)
-        {
-            if (IsOfAKind(hand) == 3)
-                return true;
-            return false;
-        }
-
-        // TWO OF A KIND
-        static bool IsTwoPair(Card[] hand)
-        {
-            if (IsOfAKind(hand) == 8)
-                return true;
-            return false;
-        }
-
-        // TWO OF A KIND
-        static bool IsPair(Card[] hand)
-        {
-            if (IsOfAKind(hand) == 2)
-                return true;
-            return false;
+            return player;
         }
 
         // IS A STRAIGHT FLUSH
